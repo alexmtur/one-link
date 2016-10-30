@@ -1,0 +1,116 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<dom-module id="one-page">
+    <template>
+        <style>
+            /*:host {*/
+            /*display: block;*/
+            /*--app-primary-color: #4285f4;*/
+            /*--app-secondary-color: black;*/
+            /*}*/
+            :host ::content {
+                display: var(--one-display, 'none');
+            }
+        </style>
+
+        <app-location route="{{route}}"></app-location>
+        <!--<app-route-->
+                <!--route="{{route}}"-->
+                <!--pattern="{{pattern}}"-->
+                <!--data="{{routeData}}"-->
+                <!--tail="{{subroute}}">-->
+        <!--</app-route>-->
+        <content hidden$="{{hide}}"></content>
+    </template>
+
+    <script>
+
+        Polymer({
+
+            is: 'one-page',
+
+            properties: {
+                page: {
+                    type: String,
+                    reflectToAttribute: true,
+                    observer: '_pageChanged'
+                },
+                //The url of the file for lazy loading
+                fileUrl: {
+                    type: String
+                },
+                visible: {
+                    type: Number
+                },
+                //Url for the element to be active
+                url: {
+                    type: String
+                },
+                name: {
+                    type: String
+                },
+                //TODO: Handle patterns for complex routing
+                pattern: {
+                    type: String,
+                    readOnly: true
+                },
+                //Hide when url doesn't match element url
+                hide: {
+                    type: Boolean,
+                    value: true,
+                    reflectToAttribute: true,
+                    notify: true
+                },
+                //Default page when url is '/'
+                default: {
+                    type: Boolean,
+                    value: false
+                },
+                //Level of indentation of url: E.g: /home === 1. /home/cars === 2. /home/cars/ferrari === 3...
+                index: {
+                    type: Number
+                }
+
+            },
+            ready: function () {
+            },
+
+            observers: [
+                '_routePageChanged(route.path)'
+            ],
+
+            _routePageChanged: function(path) {
+                //When page is default
+                if((!path || path === '/') && this.url && this.url !== '/' && this.default) {
+                    console.log('here')
+                    this.set('route.path', this.url);
+                    return;
+                }
+
+                //Extract path depending on index
+                if(this.index) path = path.split('/')[this.index];
+                console.log('path: ' + path + ', url: ' + this.url)
+
+                //Display when url matches path
+                if(path === this.url) {
+                    if(this.fileUrl) this.importHref(this.resolveUrl(this.fileUrl), null, null, true);
+                    this.hide = false;
+                    this.customStyle['--one-display'] = 'block';
+                    Polymer.updateStyles();
+                }
+
+                //Hide when url doesn't match path
+                else if(this.url) {
+                    this.hide = true;
+                    this.customStyle['--one-display'] = 'none';
+                    Polymer.updateStyles();
+                }
+            }
+
+        });
+
+    </script>
+
+</dom-module>
