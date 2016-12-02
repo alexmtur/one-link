@@ -1,0 +1,88 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<dom-module id="one-link">
+    <template>
+        <style>
+            .anchor {
+                color: rgba(255,255,255,.5);
+                text-decoration: inherit;
+                /*.ease(.3s);*/
+            }
+            .anchor[active] {
+                /*color: green;*/
+                /*background: pink !important;*/
+                /*opacity: 1;*/
+                color:white;
+            }
+            a:hover, .anchor:hover {
+                color: rgba(255,255,255,.8);
+            }
+            a:active {
+                color: white;
+            }
+        </style>
+        <app-location route="{{route}}"></app-location>
+        <a class="anchor" href="[[href]]" active$="[[active]]">
+            <content></content>
+        </a>
+    </template>
+
+    <script>
+
+        Polymer({
+
+            is: 'one-link',
+
+            properties: {
+                //href property for the anchor
+                href: {
+                    type: String,
+                    reflectToAttribute: true,
+                    notify: true
+                },
+                //Becomes active when the current url matches the href property
+                active: {
+                    type: Boolean,
+                    value: false
+                },
+                //If true, the url has to be exactly equal to href, otherwise it checks they begin the same
+                exact: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+            observers: [
+                '_routePageChanged(route.path)'
+            ],
+
+            //Executed when the url changes
+            _routePageChanged: function(path) {
+                if(!this.exact) {
+                    path = path.substring(0, this.href.length);
+                }
+                //Check if the current url matches the href property
+                if(this.href === path) {
+                    if(this.active) {
+                        return;
+                    }
+                    else {
+                        this.active = true;
+                    }
+                }
+                else {
+                    if(this.active) {
+                        this.active = false;
+                    }
+                    else {
+                        return
+                    }
+                }
+            }
+        });
+
+    </script>
+
+</dom-module>
