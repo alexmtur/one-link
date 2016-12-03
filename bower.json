@@ -13,5 +13,11 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+      "polymer": "Polymer/polymer#latest",
+      "app-route": "polymerelements/app-route#latest"
+  },
+  "devDependencies": {
+  }
 }
