@@ -25,41 +25,41 @@
         </style>
         <app-location route="{{route}}"></app-location>
         <a class="anchor" href="[[href]]" active$="[[active]]">
-            <content></content>
+            <slot></slot>
         </a>
     </template>
 
     <script>
-
-        Polymer({
-
-            is: 'one-link',
-
-            properties: {
-                //href property for the anchor
-                href: {
-                    type: String,
-                    reflectToAttribute: true,
-                    notify: true
-                },
-                //Becomes active when the current url matches the href property
-                active: {
-                    type: Boolean,
-                    value: false
-                },
-                //If true, the url has to be exactly equal to href, otherwise it checks they begin the same
-                exact: {
-                    type: Boolean,
-                    value: false
-                }
-            },
-
-            observers: [
-                '_routePageChanged(route.path)'
-            ],
+        class OneLink extends Polymer.Element {
+            static get is() { return "one-link"; }
+            static get properties() {
+                return {
+                    //href property for the anchor
+                    href: {
+                        type: String,
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+                    //Becomes active when the current url matches the href property
+                    active: {
+                        type: Boolean,
+                        value: false
+                    },
+                    //If true, the url has to be exactly equal to href, otherwise it checks they begin the same
+                    exact: {
+                        type: Boolean,
+                        value: false
+                    }
+                };
+            }
+            static get observers() {
+                return [
+                    '_routePageChanged(route.path)'
+                ]
+            }
 
             //Executed when the url changes
-            _routePageChanged: function(path) {
+            _routePageChanged(path) {
                 if(!this.exact) {
                     path = path.substring(0, this.href.length);
                 }
@@ -81,8 +81,7 @@
                     }
                 }
             }
-        });
-
+        }
+        customElements.define(OneLink.is, OneLink);
     </script>
-
 </dom-module>
